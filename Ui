@@ -1,0 +1,281 @@
+-- [[ EXC HUB - Black & White Mobile UI ]] --
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local LocalPlayer = Players.LocalPlayer
+
+-- ลบ UI เก่าออกก่อนถ้ารันซ้ำ
+if game:GetService("CoreGui"):FindFirstChild("EXCHubGUI") then
+    game:GetService("CoreGui").EXCHubGUI:Destroy()
+end
+
+-- สร้าง ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "EXCHubGUI"
+ScreenGui.ResetOnSpawn = false
+
+if syn and syn.protect_gui then
+    syn.protect_gui(ScreenGui)
+    ScreenGui.Parent = game:GetService("CoreGui")
+elseif gethui then
+    ScreenGui.Parent = gethui()
+else
+    ScreenGui.Parent = game:GetService("CoreGui")
+end
+
+-- ==================== [ กรอบหลัก: โทนสีดำ ] ==================== --
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 440, 0, 240) -- ขนาดกระทัดรัดสำหรับมือถือ
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0) -- ล็อกตรงกลางจอ
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- สีดำเข้ม
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+MainFrame.Parent = ScreenGui
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(255, 255, 255) -- เส้นขอบสีขาว
+MainStroke.Thickness = 1.2
+MainStroke.Parent = MainFrame
+
+-- ==================== [ ปุ่มเปิด/ปิด UI (Toggle Button ขาวดำ) ] ==================== --
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Name = "ToggleBtn"
+ToggleBtn.Size = UDim2.new(0, 40, 0, 40)
+ToggleBtn.Position = UDim2.new(0.02, 0, 0.12, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ToggleBtn.Text = "EXC"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 11
+ToggleBtn.Font = Enum.Font.GothamBold
+ToggleBtn.Parent = ScreenGui
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(0, 10)
+ToggleCorner.Parent = ToggleBtn
+
+local ToggleStroke = Instance.new("UIStroke")
+ToggleStroke.Color = Color3.fromRGB(255, 255, 255)
+ToggleStroke.Thickness = 1.2
+ToggleStroke.Parent = ToggleBtn
+
+-- ฟังก์ชันกดเปิด/ปิด
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- ==================== [ ด้านซ้าย: การ์ดโปรไฟล์ขาวดำ ] ==================== --
+local ProfilePanel = Instance.new("Frame")
+ProfilePanel.Name = "ProfilePanel"
+ProfilePanel.Size = UDim2.new(0, 130, 1, 0)
+ProfilePanel.Position = UDim2.new(0, 0, 0, 0)
+ProfilePanel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ProfilePanel.BorderSizePixel = 0
+ProfilePanel.Parent = MainFrame
+
+local ProfileCorner = Instance.new("UICorner")
+ProfileCorner.CornerRadius = UDim.new(0, 12)
+ProfileCorner.Parent = ProfilePanel
+
+-- รูปโปรไฟล์
+local AvatarImage = Instance.new("ImageLabel")
+AvatarImage.Name = "AvatarImage"
+AvatarImage.Size = UDim2.new(0, 52, 0, 52)
+AvatarImage.Position = UDim2.new(0.5, -26, 0, 18)
+AvatarImage.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+AvatarImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. LocalPlayer.UserId .. "&w=150&h=150"
+AvatarImage.Parent = ProfilePanel
+
+local AvatarCorner = Instance.new("UICorner")
+AvatarCorner.CornerRadius = UDim.new(1, 0)
+AvatarCorner.Parent = AvatarImage
+
+local AvatarStroke = Instance.new("UIStroke")
+AvatarStroke.Color = Color3.fromRGB(255, 255, 255)
+AvatarStroke.Thickness = 1.5
+AvatarStroke.Parent = AvatarImage
+
+-- ชื่อ DisplayName
+local DisplayName = Instance.new("TextLabel")
+DisplayName.Size = UDim2.new(1, -10, 0, 16)
+DisplayName.Position = UDim2.new(0, 5, 0, 78)
+DisplayName.BackgroundTransparency = 1
+DisplayName.Text = LocalPlayer.DisplayName
+DisplayName.TextColor3 = Color3.fromRGB(255, 255, 255)
+DisplayName.TextSize = 12
+DisplayName.Font = Enum.Font.GothamBold
+DisplayName.TextTruncate = Enum.TextTruncate.AtEnd
+DisplayName.Parent = ProfilePanel
+
+-- ชื่อ Username
+local Username = Instance.new("TextLabel")
+Username.Size = UDim2.new(1, -10, 0, 14)
+Username.Position = UDim2.new(0, 5, 0, 94)
+Username.BackgroundTransparency = 1
+Username.Text = "@" .. LocalPlayer.Name
+Username.TextColor3 = Color3.fromRGB(160, 160, 160)
+Username.TextSize = 10
+Username.Font = Enum.Font.Gotham
+Username.TextTruncate = Enum.TextTruncate.AtEnd
+Username.Parent = ProfilePanel
+
+-- เส้นแบ่ง
+local Divider = Instance.new("Frame")
+Divider.Size = UDim2.new(0.8, 0, 0, 1)
+Divider.Position = UDim2.new(0.1, 0, 0, 116)
+Divider.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Divider.BorderSizePixel = 0
+Divider.Parent = ProfilePanel
+
+-- แท็กสถานะ
+local StatusTag = Instance.new("TextLabel")
+StatusTag.Size = UDim2.new(0.85, 0, 0, 22)
+StatusTag.Position = UDim2.new(0.075, 0, 0, 128)
+StatusTag.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+StatusTag.Text = "● ACTIVE"
+StatusTag.TextColor3 = Color3.fromRGB(255, 255, 255)
+StatusTag.TextSize = 9
+StatusTag.Font = Enum.Font.GothamBold
+StatusTag.Parent = ProfilePanel
+
+local StatusCorner = Instance.new("UICorner")
+StatusCorner.CornerRadius = UDim.new(0, 6)
+StatusCorner.Parent = StatusTag
+
+-- ==================== [ ด้านขวา: ส่วนเนื้อหาหลัก ] ==================== --
+local ContentPanel = Instance.new("Frame")
+ContentPanel.Name = "ContentPanel"
+ContentPanel.Size = UDim2.new(1, -130, 1, 0)
+ContentPanel.Position = UDim2.new(0, 130, 0, 0)
+ContentPanel.BackgroundTransparency = 1
+ContentPanel.Parent = MainFrame
+
+-- หัวข้อสคริปต์ EXC HUB
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0, 150, 0, 28)
+Title.Position = UDim2.new(0, 15, 0, 10)
+Title.BackgroundTransparency = 1
+Title.Text = "EXC HUB"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 17
+Title.Font = Enum.Font.GothamBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = ContentPanel
+
+-- แถบแสดง FPS & เซิร์ฟเวอร์
+local StatsContainer = Instance.new("Frame")
+StatsContainer.Size = UDim2.new(1, -30, 0, 30)
+StatsContainer.Position = UDim2.new(0, 15, 0, 40)
+StatsContainer.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+StatsContainer.BorderSizePixel = 0
+StatsContainer.Parent = ContentPanel
+
+local StatsCorner = Instance.new("UICorner")
+StatsCorner.CornerRadius = UDim.new(0, 6)
+StatsCorner.Parent = StatsContainer
+
+-- ข้อความ FPS
+local FPSLabel = Instance.new("TextLabel")
+FPSLabel.Size = UDim2.new(0.5, -5, 1, 0)
+FPSLabel.Position = UDim2.new(0, 8, 0, 0)
+FPSLabel.BackgroundTransparency = 1
+FPSLabel.Text = "⚡ FPS: --"
+FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+FPSLabel.TextSize = 10
+FPSLabel.Font = Enum.Font.GothamBold
+FPSLabel.TextXAlignment = Enum.TextXAlignment.Left
+FPSLabel.Parent = StatsContainer
+
+-- ข้อความจำนวนคนในเซิร์ฟ
+local PlayersLabel = Instance.new("TextLabel")
+PlayersLabel.Size = UDim2.new(0.5, -5, 1, 0)
+PlayersLabel.Position = UDim2.new(0.5, 0, 0, 0)
+PlayersLabel.BackgroundTransparency = 1
+PlayersLabel.Text = "👥 SERVER: --/--"
+PlayersLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+PlayersLabel.TextSize = 10
+PlayersLabel.Font = Enum.Font.GothamBold
+PlayersLabel.TextXAlignment = Enum.TextXAlignment.Right
+PlayersLabel.Parent = StatsContainer
+
+-- กล่องใส่ปุ่มสคริปต์
+local ScriptContainer = Instance.new("Frame")
+ScriptContainer.Size = UDim2.new(1, -30, 0, 145)
+ScriptContainer.Position = UDim2.new(0, 15, 0, 80)
+ScriptContainer.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ScriptContainer.BorderSizePixel = 0
+ScriptContainer.Parent = ContentPanel
+
+local ScriptCorner = Instance.new("UICorner")
+ScriptCorner.CornerRadius = UDim.new(0, 6)
+ScriptCorner.Parent = ScriptContainer
+
+-- ปุ่มตัวอย่าง: รันสคริปต์ Emotes (ปุ่มสีขาวตัวหนังสือดำ)
+local ExecuteBtn = Instance.new("TextButton")
+ExecuteBtn.Size = UDim2.new(1, -20, 0, 36)
+ExecuteBtn.Position = UDim2.new(0, 10, 0, 10)
+ExecuteBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ExecuteBtn.Text = "▶  Execute Emotes Script"
+ExecuteBtn.TextColor3 = Color3.fromRGB(15, 15, 15)
+ExecuteBtn.TextSize = 11
+ExecuteBtn.Font = Enum.Font.GothamBold
+ExecuteBtn.Parent = ScriptContainer
+
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(0, 6)
+BtnCorner.Parent = ExecuteBtn
+
+-- ฟังก์ชันเมื่อกดปุ่ม
+ExecuteBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua"))()
+end)
+
+-- ข้อความแจ้งเตือนปุ่มซ่อน/เปิด
+local InfoText = Instance.new("TextLabel")
+InfoText.Size = UDim2.new(1, -20, 0, 18)
+InfoText.Position = UDim2.new(0, 10, 0, 118)
+InfoText.BackgroundTransparency = 1
+InfoText.Text = "Tap 'EXC' button to toggle UI"
+InfoText.TextColor3 = Color3.fromRGB(130, 130, 130)
+InfoText.TextSize = 9
+InfoText.Font = Enum.Font.Gotham
+InfoText.Parent = ScriptContainer
+
+-- ==================== [ ระบบการทำงานภายใน ] ==================== --
+
+-- 1. คำนวณ FPS
+local lastUpdate = tick()
+local frameCount = 0
+RunService.RenderStepped:Connect(function()
+    frameCount = frameCount + 1
+    local now = tick()
+    if now - lastUpdate >= 0.5 then
+        local fps = math.floor(frameCount / (now - lastUpdate))
+        FPSLabel.Text = "⚡ FPS: " .. tostring(fps)
+        frameCount = 0
+        lastUpdate = now
+    end
+end)
+
+-- 2. นับจำนวนคนในเซิร์ฟเวอร์
+local function updatePlayers()
+    local current = #Players:GetPlayers()
+    local max = Players.MaxPlayers
+    PlayersLabel.Text = "👥 SERVER: " .. current .. " / " .. max
+end
+updatePlayers()
+Players.PlayerAdded:Connect(updatePlayers)
+Players.PlayerRemoving:Connect(updatePlayers)
+
+-- 3. ปุ่มลัด Toggle ซ่อน/แสดง สำหรับ PC (Right Control)
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.RightControl then
+        MainFrame.Visible = not MainFrame.Visible
+    end
+end)
